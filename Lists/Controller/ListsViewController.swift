@@ -28,6 +28,15 @@ class ListsViewController: UIViewController, UITableViewDataSource {
         lists = ListManager.retrieveLists()
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard let selectedIndexPath = self.tableView.indexPathForSelectedRow else { return }
+        if let target = segue.destination as? ListViewController {
+            target.list = self.lists[selectedIndexPath.row]
+        }
+    }
+    
+    // MARK: Table View Methods
+    
     func reloadTableView() {
         lists = ListManager.retrieveLists()
         tableView.reloadData()
@@ -45,6 +54,8 @@ class ListsViewController: UIViewController, UITableViewDataSource {
         
         return cell
     }
+    
+    // MARK: IBActions
     
     @IBAction func addList(_ sender: UIButton) {
         newListAlert = UIAlertController(title: "New List", message: "Enter a name for this list", preferredStyle: UIAlertController.Style.alert)

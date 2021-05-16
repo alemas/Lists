@@ -22,8 +22,19 @@ class ListManager {
         }
     }
     
-    static func newListItem() {
-        
+    static func newListItem(list: List, itemDescription: String) {
+        if let entity = NSEntityDescription.entity(forEntityName: "ListItem", in: persistentContainer.viewContext) {
+            let item = ListItem(entity: entity, insertInto: persistentContainer.viewContext)
+            item.itemDescription = itemDescription
+            item.list = list
+            item.creationDate = Date()
+            
+            persistentContainer.saveContext()
+        }
+    }
+    
+    static func saveContext(backgroundContext: NSManagedObjectContext? = nil) {
+        persistentContainer.saveContext(backgroundContext: backgroundContext)
     }
     
     static func retrieveLists() -> Array<List>  {
@@ -33,5 +44,4 @@ class ListManager {
             return object as? List
         }))
     }
-    
 }
