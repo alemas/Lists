@@ -9,8 +9,7 @@ import CoreData
 
 import UIKit
 
-class ListViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    
+class ListViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, CheckboxViewDelegate {
     
     @IBOutlet private var tableView: UITableView!
     
@@ -25,7 +24,7 @@ class ListViewController: UIViewController, UITableViewDelegate, UITableViewData
         super.viewDidLoad()
         
         if let navController = self.navigationController {
-            navController.navigationBar.topItem!.title = "List"
+            navController.navigationBar.topItem!.title = list.name
         }
         
         self.tableView.dataSource = self
@@ -49,29 +48,22 @@ class ListViewController: UIViewController, UITableViewDelegate, UITableViewData
         return cell
     }
     
+    // MARK:CheckboxViewDelegate protocol
+    
+    func didChangeCheckState(checkboxView: CheckboxView, isChecked: Bool) {
+        
+    }
+    
+    
     // MARK:IBActions
     
     @IBAction func addItem(_ sender: UIButton) {
-        newItemAlert = UIAlertController(title: "New Item", message: "Enter a name for this list", preferredStyle: UIAlertController.Style.alert)
-        newItemAlert.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil))
-        
         let saveAction = UIAlertAction(title: "Save", style: UIAlertAction.Style.default, handler: { _ in
             ListManager.newListItem(list: self.list, itemDescription: self.newItemAlert.textFields![0].text!)
+            ListManager.saveContext()
             self.tableView.reloadData()
         })
-        saveAction.isEnabled = false
-        newItemAlert.addAction(saveAction)
-        newItemAlert.preferredAction = saveAction
-        
-        newItemAlert.addTextField { txtFieldName in
-            txtFieldName.placeholder = "Name"
-            txtFieldName.addTarget(self , action: #selector(self.alertTextFieldDidChange(_:)), for: UIControl.Event.editingChanged)
-        }
-        
+        newItemAlert = UIAlertController(title: "New Item", message: "Enter a description for this item", preferredStyle: UIAlertController.Style.alert, successAction: saveAction, txtFieldPlaceholder: "Name")
         self.present(newItemAlert, animated: true, completion: nil)
-    }
-    
-    @IBAction private func alertTextFieldDidChange (_ sender: UITextField) {
-        newItemAlert.preferredAction?.isEnabled = !sender.text!.isEmpty
     }
 }

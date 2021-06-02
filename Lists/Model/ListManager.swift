@@ -17,8 +17,6 @@ class ListManager {
             let list = List(entity: entity, insertInto: persistentContainer.viewContext)
             list.name = name
             list.creationDate = Date()
-            
-            persistentContainer.saveContext()
         }
     }
     
@@ -28,9 +26,18 @@ class ListManager {
             item.itemDescription = itemDescription
             item.list = list
             item.creationDate = Date()
-            
-            persistentContainer.saveContext()
         }
+    }
+    
+    static func editList(list: List, name: String?) {
+        if let name = name { list.name = name }
+    }
+    
+    static func deleteList(list: List) {
+        for item in list.itemsArray {
+            persistentContainer.delete(object: item)
+        }
+        persistentContainer.delete(object: list)
     }
     
     static func saveContext(backgroundContext: NSManagedObjectContext? = nil) {

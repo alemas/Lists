@@ -24,10 +24,12 @@
 		5392BE7D263F57FC0024DE5A /* ListsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5392BE7C263F57FC0024DE5A /* ListsViewController.swift */; };
 		539FD19F264B368300E6E7C9 /* PersistentContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 539FD19E264B368300E6E7C9 /* PersistentContainer.swift */; };
 		53A3AF9F264DFA9C004A1C6A /* ListManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53A3AF9E264DFA9C004A1C6A /* ListManager.swift */; };
+		53ADB52D2654AF1C00E26464 /* icon_more.png in Resources */ = {isa = PBXBuildFile; fileRef = 53ADB52C2654AF1C00E26464 /* icon_more.png */; };
 		53B166802650220200F64136 /* List+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B1667C2650220200F64136 /* List+CoreDataClass.swift */; };
 		53B166812650220200F64136 /* List+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B1667D2650220200F64136 /* List+CoreDataProperties.swift */; };
 		53B166822650220200F64136 /* ListItem+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B1667E2650220200F64136 /* ListItem+CoreDataClass.swift */; };
 		53B166832650220200F64136 /* ListItem+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53B1667F2650220200F64136 /* ListItem+CoreDataProperties.swift */; };
+		53D3EFF326656EFB0009E630 /* UIAlertController+UITextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D3EFF226656EFB0009E630 /* UIAlertController+UITextField.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -71,10 +73,12 @@
 		5392BE7C263F57FC0024DE5A /* ListsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListsViewController.swift; sourceTree = "<group>"; };
 		539FD19E264B368300E6E7C9 /* PersistentContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentContainer.swift; sourceTree = "<group>"; };
 		53A3AF9E264DFA9C004A1C6A /* ListManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListManager.swift; sourceTree = "<group>"; };
+		53ADB52C2654AF1C00E26464 /* icon_more.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon_more.png; sourceTree = "<group>"; };
 		53B1667C2650220200F64136 /* List+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "List+CoreDataClass.swift"; sourceTree = "<group>"; };
 		53B1667D2650220200F64136 /* List+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "List+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		53B1667E2650220200F64136 /* ListItem+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ListItem+CoreDataClass.swift"; sourceTree = "<group>"; };
 		53B1667F2650220200F64136 /* ListItem+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ListItem+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		53D3EFF226656EFB0009E630 /* UIAlertController+UITextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+UITextField.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -135,7 +139,9 @@
 				535D9586263DB9A1007E6ABB /* LaunchScreen.storyboard */,
 				535D9589263DB9A1007E6ABB /* Info.plist */,
 				535D9581263DB9A0007E6ABB /* Lists.xcdatamodeld */,
+				53D3EFF126656E800009E630 /* Extensions */,
 				53B1667B265021EA00F64136 /* Core Data */,
+				53ADB5272654AB6700E26464 /* Resources */,
 			);
 			path = Lists;
 			sourceTree = "<group>";
@@ -196,6 +202,14 @@
 			path = "UI Elements";
 			sourceTree = "<group>";
 		};
+		53ADB5272654AB6700E26464 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				53ADB52C2654AF1C00E26464 /* icon_more.png */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		53B1667B265021EA00F64136 /* Core Data */ = {
 			isa = PBXGroup;
 			children = (
@@ -205,6 +219,14 @@
 				53B1667F2650220200F64136 /* ListItem+CoreDataProperties.swift */,
 			);
 			path = "Core Data";
+			sourceTree = "<group>";
+		};
+		53D3EFF126656E800009E630 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				53D3EFF226656EFB0009E630 /* UIAlertController+UITextField.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -313,6 +335,7 @@
 				535D95B5263DBA5D007E6ABB /* ListItemTableViewCell.xib in Resources */,
 				535D9588263DB9A1007E6ABB /* LaunchScreen.storyboard in Resources */,
 				535D9585263DB9A1007E6ABB /* Assets.xcassets in Resources */,
+				53ADB52D2654AF1C00E26464 /* icon_more.png in Resources */,
 				535D9580263DB9A0007E6ABB /* Main.storyboard in Resources */,
 				5335DEC52651B23D00D4CF7D /* ListTableViewCell.xib in Resources */,
 			);
@@ -344,6 +367,7 @@
 				53B166822650220200F64136 /* ListItem+CoreDataClass.swift in Sources */,
 				53B166832650220200F64136 /* ListItem+CoreDataProperties.swift in Sources */,
 				5392BE7D263F57FC0024DE5A /* ListsViewController.swift in Sources */,
+				53D3EFF326656EFB0009E630 /* UIAlertController+UITextField.swift in Sources */,
 				535D9583263DB9A0007E6ABB /* Lists.xcdatamodeld in Sources */,
 				535D9579263DB9A0007E6ABB /* AppDelegate.swift in Sources */,
 				5335DEC42651B23D00D4CF7D /* ListTableViewCell.swift in Sources */,
@@ -531,6 +555,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 35329TFT9S;
 				INFOPLIST_FILE = Lists/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -550,6 +575,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 35329TFT9S;
 				INFOPLIST_FILE = Lists/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

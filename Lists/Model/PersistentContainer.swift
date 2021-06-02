@@ -43,6 +43,14 @@ class PersistentContainer: NSPersistentContainer {
         }
     }
     
+    func fetchById(id: NSManagedObjectID) -> NSManagedObject {
+        return self.viewContext.object(with: id)
+    }
+    
+    func delete(object: NSManagedObject) {
+        self.viewContext.delete(object)
+    }
+    
     func saveContext(backgroundContext: NSManagedObjectContext? = nil) {
        let context = backgroundContext ?? viewContext
        guard context.hasChanges else { return }

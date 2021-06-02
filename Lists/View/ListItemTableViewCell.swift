@@ -14,10 +14,6 @@ class ListItemTableViewCell: UITableViewCell {
     @IBOutlet var lblDescription: UILabel!
     @IBOutlet var checkboxView: CheckboxView!
     
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-    }
-    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

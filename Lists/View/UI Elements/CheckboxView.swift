@@ -8,7 +8,7 @@
 import UIKit
 
 protocol CheckboxViewDelegate {
-    func didChangeCheckState(isChecked: Bool)
+    func didChangeCheckState(checkboxView: CheckboxView, isChecked: Bool)
 }
 
 class CheckboxView: UIView {
@@ -70,7 +70,7 @@ class CheckboxView: UIView {
         if sender.state == .ended {
             self.isChecked = !self.isChecked
             guard let delegate = self.delegate else { return }
-            delegate.didChangeCheckState(isChecked: self.isChecked)
+            delegate.didChangeCheckState(checkboxView: self, isChecked: self.isChecked)
         }
     }
 

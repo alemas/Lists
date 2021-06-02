@@ -8,12 +8,13 @@
 import UIKit
 import CoreData
 
-class ListsViewController: UIViewController, UITableViewDataSource {
+class ListsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     @IBOutlet var tableView: UITableView!
+    private lazy var btnEdit: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(toggleEditMode(sender:)))
+    private lazy var btnDone: UIBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(toggleEditMode(sender:)))
     
     var persistentContainer: PersistentContainer!
-    private var newListAlert: UIAlertController!
     private var lists: Array<List> = []
     private var dateFormatter = DateFormatter()
     
@@ -26,16 +27,37 @@ class ListsViewController: UIViewController, UITableViewDataSource {
         
         dateFormatter.dateFormat = "dd/MM/YY"
         lists = ListManager.retrieveLists()
+        
+        self.tableView.dataSource = self
+        self.tableView.register(UINib(nibName: "ListTableViewCell", bundle: nil), forCellReuseIdentifier: ListTableViewCell.identifier)
+        tableView.rowHeight = UITableView.automaticDimension
     }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        guard let selectedIndexPath = self.tableView.indexPathForSelectedRow else { return }
-        if let target = segue.destination as? ListViewController {
-            target.list = self.lists[selectedIndexPath.row]
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.navigationItem.setRightBarButton(btnEdit, animated: false)
+    }
+    
+    @objc func toggleEditMode(sender: Any) {
+        let isEditing = self.tableView.isEditing
+        self.navigationItem.setRightBarButton(isEditing ? self.btnEdit : self.btnDone, animated: true)
+        self.tableView.setEditing(!isEditing, animated: true)
+    }
+    
+    @objc func showEditOptions(_ sender: UITapGestureRecognizer) {
+        if let cell = sender.view?.superview as? ListTableViewCell {
+            let row = self.tableView.indexPath(for: cell)!.row
+            let list = self.lists[row]
+            let alert = UIAlertController(title: "Selected list \"\(list.name!)\"", message: "Choose an action", preferredStyle: UIAlertController.Style.actionSheet)
+            alert.addAction(UIAlertAction(title: "Rename", style: .default, handler: { _ in self.renameList(list: list) }))
+            alert.addAction(UIAlertAction(title: "Delete", style: .destructive, handler: { _ in self.deleteList(list: list) }))
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+            
+            self.present(alert, animated: true, completion: nil)
         }
     }
     
-    // MARK: Table View Methods
+    // MARK: Table View Data Source Methods
     
     func reloadTableView() {
         lists = ListManager.retrieveLists()
@@ -47,48 +69,82 @@ class ListsViewController: UIViewController, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ListCell")!
+        let cell = self.tableView.dequeueReusableCell(withIdentifier: ListTableViewCell.identifier, for: indexPath) as! ListTableViewCell
         let list = lists[indexPath.row]
-        cell.textLabel?.text = list.name
-        cell.detailTextLabel?.text = dateFormatter.string(from: list.creationDate!)
+        
+        cell.lblName.text = list.name
+        cell.lblCreationDate.text = dateFormatter.string(from: list.creationDate!)
+        if cell.editingAccessoryView!.gestureRecognizers == nil {
+            cell.editingAccessoryView!.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showEditOptions(_:))))
+        }
         
         return cell
     }
     
-    // MARK: IBActions
+    // MARK: Table View Delegate
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if !tableView.isEditing {
+            performSegue(withIdentifier: "showListSegue", sender: self.tableView.cellForRow(at:indexPath))
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        .none
+    }
+    
+    func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
+        return false
+    }
+    
+    func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        let movedList = self.lists[sourceIndexPath.row]
+        self.lists.remove(at: sourceIndexPath.row)
+        self.lists.insert(movedList, at: destinationIndexPath.row)
+        
+    }
+    
+    // MARK: Lists manipulation
     
     @IBAction func addList(_ sender: UIButton) {
-        newListAlert = UIAlertController(title: "New List", message: "Enter a name for this list", preferredStyle: UIAlertController.Style.alert)
-        newListAlert.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.cancel, handler: nil))
+        var alert: UIAlertController?
         
-        let saveAction = UIAlertAction(title: "Save", style: UIAlertAction.Style.default, handler: { _ in
-            ListManager.newList(name: self.newListAlert.textFields![0].text!)
+        let saveAction = UIAlertAction(title: "Save", style: UIAlertAction.Style.default, handler: { action in
+            ListManager.newList(name: alert!.textFields![0].text!)
+            ListManager.saveContext()
             self.reloadTableView()
         })
-        saveAction.isEnabled = false
-        newListAlert.addAction(saveAction)
-        newListAlert.preferredAction = saveAction
         
-        newListAlert.addTextField { txtFieldName in
-            txtFieldName.placeholder = "Name"
-            txtFieldName.addTarget(self , action: #selector(self.alertTextFieldDidChange(_:)), for: UIControl.Event.editingChanged)
-        }
-        
-        self.present(newListAlert, animated: true, completion: nil)
+        alert = UIAlertController(title: "New List", message: "Enter a name for this list", preferredStyle: .alert, successAction: saveAction, txtFieldPlaceholder: "Name")
+        self.present(alert!, animated: true, completion: nil)
     }
     
-    @IBAction private func alertTextFieldDidChange (_ sender: UITextField) {
-        newListAlert.preferredAction?.isEnabled = !sender.text!.isEmpty
+    func renameList(list: List) {
+        var alert: UIAlertController?
+        
+        let renameAction = UIAlertAction(title: "Save", style: UIAlertAction.Style.default, handler: { _ in
+            ListManager.editList(list: list, name: alert!.textFields![0].text!)
+            ListManager.saveContext()
+            self.reloadTableView()
+        })
+        
+        alert = UIAlertController(title: "Rename List", message: "Enter a new name for this list", preferredStyle: .alert, successAction: renameAction, txtFieldPlaceholder: "Name")
+        alert!.textFields![0].text = list.name
+        self.present(alert!, animated: true, completion: nil)
+    }
+    
+    func deleteList(list: List) {
+        ListManager.deleteList(list: list)
+        ListManager.saveContext()
+        self.reloadTableView()
     }
 
-    /*
     // MARK: - Navigation
 
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+        guard let selectedIndexPath = self.tableView.indexPathForSelectedRow else { return }
+        if let target = segue.destination as? ListViewController {
+            target.list = self.lists[selectedIndexPath.row]
+        }
     }
-    */
-
 }
